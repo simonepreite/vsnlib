@@ -1,0 +1,39 @@
+VNSTREE:
+  CLIENT:
+        init_vnslib:
+          Deve ricevere le informazioni necessarie ad interagire con lo stack che si intende utilizzare.
+          IN: Nome stack e lista delle funzioni.
+          OUT: Eventuali errori relativi all'inizializzazione della libreria.
+
+        handle_vnslib:
+          Questa funzione si occupa di trasferire il pacchetto netlink alla libreria.
+          Primo parse per richiamare e call della funzione che si occupa di gestire l'azione.
+          Esistono diversi scenari possibili:
+          1) utilizzando ad esempio il modulo unrealvnslib in vuos non si necessita di chiamare questa funzione
+             in quanto se ne occupa il modulo una volta intercettata la sendto.
+          2) generando il pacchetto netlink nel sorgente basta chiamare la funzione passando come argomento il pacchetto creato
+             e sarà la libreria ad occuparsi del resto.
+          IN: netlink request pack.
+          OUT: response finale.
+
+        RTM_xxx_client:
+          xxx indica l'azione che si intende svolgere, ne avremo una per LINK, una per ROUTE ed una per ADDR.
+          Al suo interno ci occuperemo di creare una struttura generale da passare al server chiamando la funzione
+          particolare per l'azione richiesta.
+          Prima della chiamata deve occuparsi di generare una struttura generale da poter utilizzare nel server per le funzioni
+          degli stack.
+          In base al risultato della chiamata precendete formalizza il pacchetto netlink di risposta che tornerà al chiamante.
+          IN: netlink request pack.
+          OUT: netlink final response.
+
+    SERVER:
+        RTM_xxx_server:
+          Corrispettive delle client ricevono la struttura generata dal chiamante e chiamano le funzioni necessarie allo stack
+          in uso per compiere l'operazione specificata, acquisiti i valori di ritorno delle funzioni si raccolgono in una struttura
+          le informazioni necessarie  a creare il pacchetto netlink di risposta, dopodichè questa struttura viene ritornata al
+          chiamante che si incarica di costruire il pacchetto di risposta (FAIL o SUCCESS che sia).
+          (quindi alla fine la handle deve essere del tipo di questa struttura).
+          IN: struttura intermedia server.
+          OUT: struttura intermedia client.
+
+          
