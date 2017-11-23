@@ -3,64 +3,60 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
-
-#include <asm/types.h>
-#include <linux/netlink.h>
-#include <linux/rtnetlink.h>
-
-#include <arpa/inet.h>
-
 #include <string.h>
+
+#include "vnslib.h"
 
 void* handle_vnslib(void* buf){
   struct nlmsghdr* header = (struct nlmsghdr*) buf;
-  struct nlmsghdr* response;
+  struct nlmsghdr* ret_pkg;
   switch(header->nlmsg_type){
     case RTM_NEWROUTE:
-          response = rtm_newroute_c(header);
+          ret_pkg = rtm_newroute_c(header);
           break;
     case RTM_DELROUTE:
-          response = rtm_delroute_c(header);
+          ret_pkg = rtm_delroute_c(header);
           break;
     case RTM_GETROUTE:
-          response = rtm_getroute_c(header);
+          ret_pkg = rtm_getroute_c(header);
           break;
     case RTM_NEWADDR:
-          response = rtm_newaddr_c(header);
+          ret_pkg = rtm_newaddr_c(header);
           break;
     case RTM_DELADDR:
-          response = rtm_deladdr_c(header);
+          ret_pkg = rtm_deladdr_c(header);
           break;
     case RTM_GETADDR:
-          response = rtm_getaddr_c(header);
+          ret_pkg = rtm_getaddr_c(header);
           break;
     case RTM_NEWLINK:
-          response = rtm_newlink_c(header);
+          ret_pkg = rtm_newlink_c(header);
           break;
     case RTM_DELLINK:
-          response = rtm_dellink_c(header);
+          ret_pkg = rtm_dellink_c(header);
           break;
     case RTM_GETLINK:
-          response = rtm_getlink_c(header);
+          ret_pkg = rtm_getlink_c(header);
           break;
     case RTM_SETLINK:
-          response = rtm_setlink_c(header);
+          ret_pkg = rtm_setlink_c(header);
           break;
     default:
           /* create standard error package */
           break;
   }
-  return (void*)response;
+  return (void*)ret_pkg;
 }
 
 struct nlmsghdr* rtm_newroute_c(struct nlmsghdr* header){
   struct rtmsg* rtm = (struct rtmsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_newroute_c();
+  generic_resp = rtm_newroute_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
@@ -70,12 +66,13 @@ struct nlmsghdr* rtm_newroute_c(struct nlmsghdr* header){
 
 struct nlmsghdr* rtm_delroute_c(struct nlmsghdr* header){
   struct rtmsg* rtm = (struct rtmsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_delroute_s();
+  generic_resp = rtm_delroute_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
@@ -85,12 +82,13 @@ struct nlmsghdr* rtm_delroute_c(struct nlmsghdr* header){
 
 struct nlmsghdr* rtm_getroute_c(struct nlmsghdr* header){
   struct rtmsg* rtm = (struct rtmsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_getroute_s();
+  generic_resp = rtm_getroute_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
@@ -102,12 +100,13 @@ struct nlmsghdr* rtm_getroute_c(struct nlmsghdr* header){
 
 struct nlmsghdr* rtm_newaddr_c(struct nlmsghdr* header){
   struct ifaddrmsg* ifa = (struct ifaddrmsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_newaddr_s();
+  generic_resp = rtm_newaddr_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
@@ -117,12 +116,13 @@ struct nlmsghdr* rtm_newaddr_c(struct nlmsghdr* header){
 
 struct nlmsghdr* rtm_deladdr_c(struct nlmsghdr* header){
   struct ifaddrmsg* ifa = (struct ifaddrmsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_deladdr_s();
+  generic_resp = rtm_deladdr_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
@@ -132,12 +132,13 @@ struct nlmsghdr* rtm_deladdr_c(struct nlmsghdr* header){
 
 struct nlmsghdr* rtm_getaddr_c(struct nlmsghdr* header){
   struct ifaddrmsg* ifa = (struct ifaddrmsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_getaddr_s();
+  generic_resp = rtm_getaddr_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
@@ -149,12 +150,13 @@ struct nlmsghdr* rtm_getaddr_c(struct nlmsghdr* header){
 
 struct nlmsghdr* rtm_newlink_c(struct nlmsghdr* header){
   struct ifinfomsg* ifi = (struct ifinfomsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_newlink_s();
+  generic_resp = rtm_newlink_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
@@ -164,12 +166,13 @@ struct nlmsghdr* rtm_newlink_c(struct nlmsghdr* header){
 
 struct nlmsghdr* rtm_dellink_c(struct nlmsghdr* header){
   struct ifinfomsg* ifi = (struct ifinfomsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_dellink_s();
+  generic_resp = rtm_dellink_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
@@ -179,12 +182,13 @@ struct nlmsghdr* rtm_dellink_c(struct nlmsghdr* header){
 
 struct nlmsghdr* rtm_getlink_c(struct nlmsghdr* header){
   struct ifinfomsg* ifi = (struct ifinfomsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_getlink_s();
+  generic_resp = rtm_getlink_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
@@ -194,12 +198,13 @@ struct nlmsghdr* rtm_getlink_c(struct nlmsghdr* header){
 
 struct nlmsghdr* rtm_setlink_c(struct nlmsghdr* header){
   struct ifinfomsg* ifi = (struct ifinfomsg*)(NLMSG_DATA(header));
-  struct /*da definire*/ generic_conf;
+  struct config* generic_conf;
+  struct response* generic_resp;
   /*
   1-parsare il payload del pacchetto
   2-chiamare la gemella del server passando la struttura generica
   */
-  struct /*da definire*/ rtm_setlink_s();
+  generic_resp = rtm_setlink_s(generic_conf);
   /*
   3-aspettare la risposta con la struttura
   4-costruire il pacchetto di risposta
