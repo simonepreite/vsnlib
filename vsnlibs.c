@@ -5,7 +5,7 @@
 #include <dirent.h>
 #include <string.h>
 
-#include "vnslib.h"
+#include "vsnlib.h"
 
 
 

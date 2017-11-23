@@ -5,9 +5,9 @@
 #include <dirent.h>
 #include <string.h>
 
-#include "vnslib.h"
+#include "vsnlib.h"
 
-void* handle_vnslib(void* buf){
+void* handle_vsnlib(void* buf){
   struct nlmsghdr* header = (struct nlmsghdr*) buf;
   struct nlmsghdr* ret_pkg;
   switch(header->nlmsg_type){

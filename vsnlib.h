@@ -1,5 +1,5 @@
-#ifndef _VNSLIB_H
-#define _VNSLIB_H
+#ifndef _vsnLIB_H
+#define _vsnLIB_H
 
 #include <asm/types.h>
 #include <linux/netlink.h>
@@ -18,7 +18,7 @@ struct response{
 
 /* client side */
 
-extern void* handle_vnslib(void* buf);
+extern void* handle_vsnlib(void* buf);
 struct nlmsghdr* rtm_newroute_c(struct nlmsghdr* header);
 struct nlmsghdr* rtm_delroute_c(struct nlmsghdr* header);
 struct nlmsghdr* rtm_getroute_c(struct nlmsghdr* header);

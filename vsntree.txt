@@ -1,15 +1,15 @@
-VNSTREE:
+vsnTREE:
   CLIENT:
-        init_vnslib:
+        init_vsnlib:
           Deve ricevere le informazioni necessarie ad interagire con lo stack che si intende utilizzare.
           IN: Nome stack e lista delle funzioni.
           OUT: Eventuali errori relativi all'inizializzazione della libreria.
 
-        handle_vnslib:
+        handle_vsnlib:
           Questa funzione si occupa di trasferire il pacchetto netlink alla libreria.
           Primo parse per richiamare e call della funzione che si occupa di gestire l'azione.
           Esistono diversi scenari possibili:
-          1) utilizzando ad esempio il modulo unrealvnslib in vuos non si necessita di chiamare questa funzione
+          1) utilizzando ad esempio il modulo unrealvsnlib in vuos non si necessita di chiamare questa funzione
              in quanto se ne occupa il modulo una volta intercettata la sendto.
           2) generando il pacchetto netlink nel sorgente basta chiamare la funzione passando come argomento il pacchetto creato
              e sarà la libreria ad occuparsi del resto.
@@ -35,5 +35,3 @@ VNSTREE:
           (quindi alla fine la handle deve essere del tipo di questa struttura).
           IN: struttura intermedia server.
           OUT: struttura intermedia client.
-
-          

@@ -1,21 +1,21 @@
 CC=gcc
 BUILDDIR=build/
 
-all: clean bdircreat vnslib-all
+all: clean bdircreat vsnlib-all
 
 bdircreat:
 	mkdir -p build
 
-vnslib-all: vnslibc vnslibs
-		gcc -shared  -o build/libvnslib.so build/vnslibc.o build/vnslibs.o
-		##ar rv build/vnslib.a build/vnslibc.o build/vnslibs.o
-		##ranlib build/vnslib.a
+vsnlib-all: vsnlibc vsnlibs
+		gcc -shared  -o build/libvsnlib.so build/vsnlibc.o build/vsnlibs.o
+		##ar rv build/vsnlib.a build/vsnlibc.o build/vsnlibs.o
+		##ranlib build/vsnlib.a
 
-vnslibc:	vnslibc.c vnslib.h
-		$(CC) -fPIC -c -o build/vnslibc.o vnslibc.c
+vsnlibc:	vsnlibc.c vsnlib.h
+		$(CC) -fPIC -c -o build/vsnlibc.o vsnlibc.c
 
-vnslibs:	vnslibs.c vnslib.h
-		$(CC) -fPIC -c -o build/vnslibs.o vnslibs.c
+vsnlibs:	vsnlibs.c vsnlib.h
+		$(CC) -fPIC -c -o build/vsnlibs.o vsnlibs.c
 
 clean:
 		rm -rf ./build
