@@ -1,13 +1,14 @@
 CC=gcc
 BUILDDIR=build/
 
-all: clean bdircreat vnslibc
+all: clean bdircreat vnslib-all
 
 bdircreat:
 	mkdir -p build
 
 vnslib-all: vnslibc vnslibs
-		$(CC) -o $(BUILDDIR)vnslib $(BUILDDIR)vnslibc.o $(BUILDDIR)vnslibs.o
+		ar rv build/vnslib.a build/vnslibc.o build/vnslibs.o
+		ranlib build/vnslib.a
 
 vnslibc:	vnslibc.c vnslib.h
 		$(CC) -c -o build/vnslibc.o vnslibc.c
