@@ -44,7 +44,7 @@ struct response* rtm_getlink_s(struct config* header);
 struct response* rtm_setlink_s(struct config* header);
 
 
-int print_address(void *buf);
+extern int print_address(const void *buf);
 
 
 

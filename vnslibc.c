@@ -223,7 +223,7 @@ struct nlmsghdr* rtm_setlink_c(struct nlmsghdr* header){
 
 
 
-int print_address(void *buf){
+int print_address(const void *buf){
 
     struct nlmsghdr* header = (struct nlmsghdr*) buf;
     //unsigned char* ip_string[sizeof(struct in6_addr)];
