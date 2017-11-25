@@ -9,26 +9,26 @@ le funzioni preesisteni di LWIPv6 richiedono come argomenti:
 struct stack *stack, struct nlmsghdr *msg,void * buf,int *offset
 */
 
-LWIPv6_addradddel(){
+struct response* LWIPv6_addradddel(struct config* cfg){
 
 }
 
-LWIPv6_getaddr(){
+struct response* LWIPv6_getaddr(struct config* cfg){
 
 }
 
-LWIPv6_adddellink(){
+struct response* LWIPv6_adddellink(struct config* cfg){
 
 }
 
-LWIPv6_getsetlink(){
+struct response* LWIPv6_getsetlink(struct config* cfg){
 
 }
 
-LWIPv6_adddelroute(){
+struct response* LWIPv6_adddelroute(struct config* cfg){
 
 }
 
-LWIPv6_getroute(){
+struct response* LWIPv6_getroute(struct config* cfg){
 
 }
