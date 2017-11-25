@@ -6,16 +6,12 @@ all: clean bdircreat vsnlib-all
 bdircreat:
 	mkdir -p build
 
-vsnlib-all: vsnlibc vsnlibs
-		gcc -shared  -o build/libvsnlib.so build/vsnlibc.o build/vsnlibs.o
-		##ar rv build/vsnlib.a build/vsnlibc.o build/vsnlibs.o
-		##ranlib build/vsnlib.a
+vsnlib-all: vsnlib
+		gcc -shared  -o build/libvsn.so build/vsnlib.o
 
-vsnlibc:	vsnlibc.c vsnlib.h
-		$(CC) -fPIC -c -o build/vsnlibc.o vsnlibc.c
+vsnlib:	vsnlib.c vsnlib.h
+		$(CC) -fPIC -c -o build/vsnlib.o vsnlib.c
 
-vsnlibs:	vsnlibs.c vsnlib.h
-		$(CC) -fPIC -c -o build/vsnlibs.o vsnlibs.c
 
 clean:
 		rm -rf ./build
