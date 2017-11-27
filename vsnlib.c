@@ -6,7 +6,9 @@
 #include <string.h>
 #include <dlfcn.h>
 
-#include "vsnlib.h"
+#include <vsnlib.h>
+#include <vsnshared.h>
+
 
 struct ret_val{
   struct nlmsghdr* res;

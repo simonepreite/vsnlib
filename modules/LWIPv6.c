@@ -9,6 +9,9 @@ le funzioni preesisteni di LWIPv6 richiedono come argomenti:
 struct stack *stack, struct nlmsghdr *msg,void * buf,int *offset
 */
 
+#include <stdio.h>
+#include <vsnlib.h>
+
 struct response* LWIPv6_addradddel(struct config* cfg){
 
 }
