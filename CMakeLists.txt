@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project(vsnlib)
+add_library(vsn SHARED vsnlib.c)
+install(TARGETS vsn DESTINATION lib)
+install(FILES vsnlib.h vsnshared.h DESTINATION include)
+set (CMAKE_CXX_FLAGS "-ldl")
