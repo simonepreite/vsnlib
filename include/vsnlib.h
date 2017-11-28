@@ -14,6 +14,19 @@ struct response{
 
 };
 
+struct ip_mask{
+	int i_prefix;
+	char *c_prefix;
+};
+
+/* questa forse è megli definirla nell'header della libreria */
+const struct ip_mask mask_len[] = {
+	{32, "255.255.255.255"},
+	{24, "255.255.255.0"},
+	{16, "255.255.0.0"},
+	{8, "255.0.0.0"}
+};
+
 typedef struct response* (*generic_api)(struct config* cfg);
 struct gen_api{
   char* fun_name;
