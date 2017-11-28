@@ -15,7 +15,7 @@ struct response{
 };
 
 /* questa forse è megli definirla nell'header della libreria */
-const char mask4_len[] = {
+const char* mask4_len[] = {
 	"255.255.255.255",
 	"255.255.255.0",
 	"255.255.0.0",

@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 project(vsnlib)
-include_directories(include)
+include_directories(./include)
 set(VSN_HEADERS ${PROJECT_SOURCE_DIR}/include)
 set(MODULES_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib/vsn/modules)
 add_library(vsn SHARED vsnlib.c)
 install(TARGETS vsn DESTINATION lib)
-install(FILES vsnlib.h vsnshared.h DESTINATION include)
+install(FILES include/vsnlib.h include/vsnshared.h DESTINATION include)
 set (CMAKE_CXX_FLAGS "-ldl")
 add_subdirectory(modules)
 
