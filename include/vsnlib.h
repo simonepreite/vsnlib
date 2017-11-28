@@ -31,7 +31,7 @@ struct gen_api{
 static struct gen_api api_table[]={
   {"adddellink", NULL},
   {"getsetlink",NULL},
-  {"addradddel", NULL},
+  {"adddeladdr", NULL},
   {"getaddr", NULL},
   {"adddelroute",NULL},
   {"getroute", NULL}

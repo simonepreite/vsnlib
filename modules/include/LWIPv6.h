@@ -2,12 +2,11 @@
 #define _LWIPv6_H
 
 
+struct response* LWIPv6_adddeladdr(struct config* cfg);
+struct response* LWIPv6_getaddr(struct config* cfg);
+struct response* LWIPv6_adddellink(struct config* cfg);
+struct response* LWIPv6_getsetlink(struct config* cfg);
+struct response* LWIPv6_adddelroute(struct config* cfg);
+struct response* LWIPv6_getroute(struct config* cfg);
 
-lwipv6_addradddel();
-lwipv6_getaddr();
-
-lwipv6_adddellink();
-lwipv6_getsetlink(); //set ancora non prevista da lwipv6
-
-lwipv6_adddelroute();
-lwipv6_getroute();
+#endif

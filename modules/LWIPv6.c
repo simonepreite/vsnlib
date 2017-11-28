@@ -12,7 +12,7 @@ struct stack *stack, struct nlmsghdr *msg,void * buf,int *offset
 #include <stdio.h>
 #include <vsnlib.h>
 
-struct response* LWIPv6_addradddel(struct config* cfg){
+struct response* LWIPv6_adddeladdr(struct config* cfg){
 
 }
 

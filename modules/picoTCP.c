@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <vsnlib.h>
 
-struct response* picoTCP_addradddel(struct config* cfg){
+struct response* picoTCP_adddeladdr(struct config* cfg){
 
 }
 
