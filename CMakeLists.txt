@@ -6,6 +6,5 @@ set(MODULES_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib/vsn/modules)
 add_library(vsn SHARED vsnlib.c)
 install(TARGETS vsn DESTINATION lib)
 install(FILES include/vsnlib.h include/vsnshared.h DESTINATION include)
-set (CMAKE_CXX_FLAGS "-ldl")
+set (CMAKE_CXX_FLAGS "-ldl -fPIC")
 add_subdirectory(modules)
-
