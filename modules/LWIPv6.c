@@ -1,14 +1,3 @@
-/*
-la libreria che contiene le funzioni di configurazione dello stack non
-dovrebbe essere caricata dinamicamente.
-Il fatto che venga caricato questo modulo piuttosto che un altro è fattibile
-solo se esiste la dipendenza quindi invece di usare dlopen si potrebbero usare
-direttamente le funzioni di libreria dello stack previsto.
-per questa in particolare il lavoro dovrebbe essere facilitato dall'implementazione esistente.
-le funzioni preesisteni di LWIPv6 richiedono come argomenti:
-struct stack *stack, struct nlmsghdr *msg,void * buf,int *offset
-*/
-
 #include <stdio.h>
 #include <vsnlib.h>
 #include <lwipv6.h>
@@ -41,23 +30,30 @@ struct response* adddeladdr(struct config* cfg){
 
     p_mask = (uint16_t*)(&mask_app);
 
-    printf("ipv6:  %04X::%04X::%04X::%04X::%04X::%04X::%04X::%04X\n",htons(*(p)),htons(*(p+1)),htons(*(p+2)),htons(*(p+3)),htons(*(p+4)),htons(*(p+5)),htons(*(p+6)),htons(*(p+7)));
+    printf("ipv6 addr:  %04X::%04X::%04X::%04X::%04X::%04X::%04X::%04X\n",htons(*(p)),htons(*(p+1)),htons(*(p+2)),htons(*(p+3)),htons(*(p+4)),htons(*(p+5)),htons(*(p+6)),htons(*(p+7)));
     IP6_ADDR(&addr,htons(*(p)),htons(*(p+1)),htons(*(p+2)),htons(*(p+3)),htons(*(p+4)),htons(*(p+5)),htons(*(p+6)),htons(*(p+7)));
     printf("mask:  %04X::%04X::%04X::%04X::%04X::%04X::%04X::%04X\n",*(p_mask),*(p_mask+1),*(p_mask+2),*(p_mask+3),*(p_mask+4),*(p_mask+5),*(p_mask+6),*(p_mask+7));
     IP6_ADDR(&mask,*(p_mask),*(p_mask+1),*(p_mask+2),*(p_mask+3),*(p_mask+4),*(p_mask+5),*(p_mask+6),*(p_mask+7)); // da sistemate con cfg
   }
   else{
     struct in_addr ip4;
-    int lwip_ip4[4]={0,0,0,0};
-    uint16_t lwip_mask4[4];
+    uint16_t lwip_mask4[4] = {0,0,0,0};
     p_mask = (uint16_t*)(&lwip_mask4);
     while(cfg->mask > 0){
       *p_mask=255;
       cfg->mask -= 8;
       p_mask++;
     }
-    inet_aton (cfg->addr, &ip4);
-    IP64_ADDR(&addr,192,168,250,20);
+    inet_aton(cfg->addr, &ip4);
+    unsigned char ip4_dot[4];
+    int j=0;
+    for(int i=0; i<4; i++){
+      ip4_dot[i]=(ip4.s_addr >> j) & 0xFF;
+      j=j+8;
+    }
+    printf("ipv4 address: %d.%d.%d.%d\n",ip4_dot[0],ip4_dot[1],ip4_dot[2],ip4_dot[3]);
+    IP64_ADDR(&addr,ip4_dot[0],ip4_dot[1],ip4_dot[2],ip4_dot[3]);
+    printf("ipv4 mask: %d.%d.%d.%d\n",lwip_mask4[0],lwip_mask4[1],lwip_mask4[2],lwip_mask4[3]);
     IP64_MASKADDR(&mask,lwip_mask4[0],lwip_mask4[1],lwip_mask4[2],lwip_mask4[3]);
   }
   if(cfg->operation == RTM_NEWADDR){
@@ -86,13 +82,27 @@ struct response* getsetlink(struct config* cfg){
 
 struct response* adddelroute(struct config* cfg){
   struct ip_addr addr;
-  struct in6_addr address;
-  uint16_t* p = (uint16_t*)(&address);
 
-  p = (uint16_t*)(&address);
-
-  inet_pton(cfg->family, cfg->addr, &address);
-  IP6_ADDR(&addr,*(p),*(p+1),*(p+2),*(p+3),*(p+4),*(p+5),*(p+6),*(p+7));
+  if(cfg->family==AF_INET6){
+    struct in6_addr address;
+    uint16_t* p = (uint16_t*)(&address);
+    p = (uint16_t*)(&address);
+    inet_pton(cfg->family, cfg->addr, &address);
+    printf("ipv6 addr:  %04X::%04X::%04X::%04X::%04X::%04X::%04X::%04X\n",htons(*(p)),htons(*(p+1)),htons(*(p+2)),htons(*(p+3)),htons(*(p+4)),htons(*(p+5)),htons(*(p+6)),htons(*(p+7)));
+    IP6_ADDR(&addr,htons(*(p)),htons(*(p+1)),htons(*(p+2)),htons(*(p+3)),htons(*(p+4)),htons(*(p+5)),htons(*(p+6)),htons(*(p+7)));
+  }
+  else{
+    struct in_addr ip4;
+    inet_aton(cfg->addr, &ip4);
+    unsigned char ip4_dot[4];
+    int j=0;
+    for(int i=0; i<4; i++){
+      ip4_dot[i]=(ip4.s_addr >> j) & 0xFF;
+      j=j+8;
+    }
+    printf("ipv4 route: %d.%d.%d.%d\n",ip4_dot[0],ip4_dot[1],ip4_dot[2],ip4_dot[3] );
+    IP64_ADDR(&addr,ip4_dot[0],ip4_dot[1],ip4_dot[2],ip4_dot[3]);
+  }
 
   if(cfg->operation==RTM_NEWROUTE){
     printf("error add route lwipv6 %d\n", lwip_add_route((struct stack*)cfg->stack, IP_ADDR_ANY, IP_ADDR_ANY, &addr, (struct netif*)(cfg->interface), 0));

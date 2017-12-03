@@ -60,9 +60,7 @@ void handle_vsnlib(void* buf, size_t len, void* nif, void* stack){
       break;
     type=header->nlmsg_type - RTM_BASE;
     header->nlmsg_pid=getpid();
-    printf("type %d :: vsncli_fun_table[type] %p\n", type, vsncli_fun_table[type]);
     if (type >= 0 && vsncli_fun_table[type] != NULL) {
-        printf("call fun client vsnlib\n");
         struct ret_val* app = malloc(sizeof(struct ret_val));
         (vsncli_fun_table[type](header, nif, stack));
     }
@@ -141,7 +139,8 @@ struct nlmsghdr* rtm_newroute_c(struct nlmsghdr* header, void* nif, void* stack)
   struct rtmsg* rtm = (struct rtmsg*)(NLMSG_DATA(header));
   struct config generic_conf;
   struct response* generic_resp;
-  char str[INET6_ADDRSTRLEN];
+  char str6[INET6_ADDRSTRLEN];
+  char* str4;
 
   generic_conf.operation=header->nlmsg_type;
   generic_conf.interface=nif;
@@ -150,10 +149,14 @@ struct nlmsghdr* rtm_newroute_c(struct nlmsghdr* header, void* nif, void* stack)
   struct rtattr* attr = (struct rtattr*)((void*)(((char*)rtm)+ sizeof(struct rtmsg)));
   if(rtm->rtm_family == AF_INET6){
     struct in6_addr* ip6_a = (struct in6_addr*)RTA_DATA(attr);
-    inet_ntop(rtm->rtm_family, ip6_a, str, INET6_ADDRSTRLEN);
-    printf("IPv6 address route: %s\n",str);
+    inet_ntop(rtm->rtm_family, ip6_a, str6, INET6_ADDRSTRLEN);
+    generic_conf.addr=str6;
   }
-  generic_conf.addr=str;
+  else{
+    struct in_addr ip4_a = *((struct in_addr*)RTA_DATA(attr));
+    str4 = inet_ntoa(ip4_a);
+    generic_conf.addr=str4;
+  }
   generic_resp = api_table[4].real_fun(&generic_conf);
 }
 
