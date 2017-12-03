@@ -41,8 +41,8 @@ struct response* adddeladdr(struct config* cfg){
 
     p_mask = (uint16_t*)(&mask_app);
 
-    printf("ipv6:  %04X::%04X::%04X::%04X::%04X::%04X::%04X::%04X\n",*(p),*(p+1),*(p+2),*(p+3),*(p+4),*(p+5),*(p+6),*(p+7));
-    IP6_ADDR(&addr,*(p),*(p+1),*(p+2),*(p+3),*(p+4),*(p+5),*(p+6),*(p+7));
+    printf("ipv6:  %04X::%04X::%04X::%04X::%04X::%04X::%04X::%04X\n",htons(*(p)),htons(*(p+1)),htons(*(p+2)),htons(*(p+3)),htons(*(p+4)),htons(*(p+5)),htons(*(p+6)),htons(*(p+7)));
+    IP6_ADDR(&addr,htons(*(p)),htons(*(p+1)),htons(*(p+2)),htons(*(p+3)),htons(*(p+4)),htons(*(p+5)),htons(*(p+6)),htons(*(p+7)));
     printf("mask:  %04X::%04X::%04X::%04X::%04X::%04X::%04X::%04X\n",*(p_mask),*(p_mask+1),*(p_mask+2),*(p_mask+3),*(p_mask+4),*(p_mask+5),*(p_mask+6),*(p_mask+7));
     IP6_ADDR(&mask,*(p_mask),*(p_mask+1),*(p_mask+2),*(p_mask+3),*(p_mask+4),*(p_mask+5),*(p_mask+6),*(p_mask+7)); // da sistemate con cfg
   }

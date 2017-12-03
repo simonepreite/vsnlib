@@ -168,17 +168,21 @@ int main(int argc, char** argv){
   fill_buf_link(&buf_link, 1);
   handle_vsnlib(&buf_link, buf_link.header.nlmsg_len, (void*)nif, (void*)stack);
 
-  fill_buf_addr(&buf_addr, "2001:db8:0:f101::2", 64, RTM_NEWADDR);
+  fill_buf_addr(&buf_addr, "2001:db8:0:f101::3", 64, RTM_NEWADDR);
   handle_vsnlib(buf, buf_addr.header.nlmsg_len, (void*)nif, (void*)stack);
 
-  fill_buf_route(&buf_route, "2001:db8:0:f101::2", RTM_NEWROUTE);
-  handle_vsnlib(buf_r, buf_route.header.nlmsg_len, (void*)nif, (void*)stack);
+  //fill_buf_route(&buf_route, "2001:db8:0:f101::2", RTM_NEWROUTE);
+  //handle_vsnlib(buf_r, buf_route.header.nlmsg_len, (void*)nif, (void*)stack);
 
   memset((char *) &serv_addr,0,sizeof(serv_addr));
     serv_addr.sin6_family = PF_INET6;
-    IP6_ADDR(&addr_6,0x2001,0xdb8,0x0000,0xf101,0x0000,0x0000,0x0000,0x2);
+    char str[INET6_ADDRSTRLEN];
+    //IP6_ADDR(&addr_6,0x2001,0x0db8,0x0000,0xf101,0x0000,0x0000,0x0000,0x2);
     //serv_addr.sin6_addr = (struct in6_addr)addr_6;//
-    inet_pton(PF_INET, "2001:db8:0:f101::1", &serv_addr.sin6_addr.s6_addr);
+    int reto = inet_pton(PF_INET6, "2001:db8:0:f101::1", serv_addr.sin6_addr.s6_addr);
+    printf("ret: %d,    %d,%d,%d,%d\n", reto, serv_addr.sin6_addr.s6_addr[0], serv_addr.sin6_addr.s6_addr[1], serv_addr.sin6_addr.s6_addr[2],serv_addr.sin6_addr.s6_addr[3]);
+    inet_ntop(PF_INET6, serv_addr.sin6_addr.s6_addr, str, INET6_ADDRSTRLEN);
+    printf("ipv test print:  %s\n", str);
     serv_addr.sin6_port = htons(atoi("9999"));
 
     /* create a TCP lwipv6 socket */
@@ -213,7 +217,7 @@ int main(int argc, char** argv){
         lwip_write(fd,buf,n);
       }
     }
-
+#if 0
     fill_buf_route(&buf_route, "2001:db8:0:f101::2", RTM_DELROUTE);
     handle_vsnlib(buf_r, buf_route.header.nlmsg_len, (void*)nif, (void*)stack);
 
@@ -222,4 +226,5 @@ int main(int argc, char** argv){
 
     fill_buf_link(&buf_link, 0);
     handle_vsnlib(&buf_link, buf_link.header.nlmsg_len, (void*)nif, (void*)stack);
+#endif
 }
