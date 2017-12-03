@@ -13,7 +13,6 @@ struct config{
 	void* interface;
 	void* stack; // stack file descriptor
 	int operation;
-
 };
 
 typedef struct response* (*generic_api)(struct config* cfg);

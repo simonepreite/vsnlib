@@ -32,11 +32,7 @@ int init_vsnlib(char* stack){ // stack al momento sarà la stringa .so della lib
   const char *error;
   char* f;
   void *stack_module;
-  char* default_path = "/usr/local/lib/vsn/modules/";
-  char* app = malloc(strlen(default_path)+strlen(stack)+1);
-  printf("init vsnlib\n" );
-  strcpy(app, default_path);
-  strcat(app, stack);
+
   stack_module = dlopen(stack,RTLD_LAZY);
   if(!stack_module){
     fprintf(stderr, "Cannot open stack library: %s\n",
@@ -44,7 +40,7 @@ int init_vsnlib(char* stack){ // stack al momento sarà la stringa .so della lib
     return -1;
   }
   for(int i=0; i < API_TABLE_SIZE; i++){
-    api_table[i].real_fun = dlsym(stack_module, /*combine_stack_handler(*/api_table[i].fun_name/*, stack)*/);
+    api_table[i].real_fun = dlsym(stack_module, api_table[i].fun_name);
     if ((error = dlerror())) {
       fprintf(stderr, "Couldn't find %s: %s\n", api_table[i].fun_name, error);
       exit(1);
@@ -72,11 +68,6 @@ void handle_vsnlib(void* buf, size_t len, void* nif, void* stack){
     }
     header = NLMSG_NEXT(header, len);
   }
-  /* da decidere:
-    1 - ci occupiamo in questa funzione di fare le send per ogni pacchetto di risposta, ma significa scandire una lista.
-    2 - si occupano le relative funzioni di fare la send, risparmiamo sulla scansione della lista e questa funzione può
-        restituire un intero di ack o nulla.
-  */
 }
 
 struct nlmsghdr* rtm_newlink_c(struct nlmsghdr* header, void* nif, void* stack){
@@ -85,72 +76,36 @@ struct nlmsghdr* rtm_newlink_c(struct nlmsghdr* header, void* nif, void* stack){
   struct response* generic_resp;
   generic_conf.interface = nif;
   generic_conf.operation = ifi->ifi_flags;
-  /*
-  1-parsare il payload del pacchetto
-  2-chiamare la gemella del server passando la struttura generica
-  */
-  printf("newlink vsnlib\n");
   generic_resp = api_table[0].real_fun(&generic_conf);
-  /*
-  3-aspettare la risposta con la struttura
-  4-costruire il pacchetto di risposta
-  5-ritornare il puntatore di questo al chiamante.
-  */
 }
 
 struct nlmsghdr* rtm_dellink_c(struct nlmsghdr* header, void* nif, void* stack){
   struct ifinfomsg* ifi = (struct ifinfomsg*)(NLMSG_DATA(header));
   struct config* generic_conf;
   struct response* generic_resp;
-  /*
-  1-parsare il payload del pacchetto
-  2-chiamare la gemella del server passando la struttura generica
-  */
   generic_resp = api_table[0].real_fun(generic_conf);
-  /*
-  3-aspettare la risposta con la struttura
-  4-costruire il pacchetto di risposta
-  5-ritornare il puntatore di questo al chiamante.
-  */
 }
 
 struct nlmsghdr* rtm_getlink_c(struct nlmsghdr* header, void* nif, void* stack){
   struct ifinfomsg* ifi = (struct ifinfomsg*)(NLMSG_DATA(header));
   struct config* generic_conf;
   struct response* generic_resp;
-  /*
-  1-parsare il payload del pacchetto
-  2-chiamare la gemella del server passando la struttura generica
-  */
   generic_resp = api_table[1].real_fun(generic_conf);
-  /*
-  3-aspettare la risposta con la struttura
-  4-costruire il pacchetto di risposta
-  5-ritornare il puntatore di questo al chiamante.
-  */
 }
 
 struct nlmsghdr* rtm_setlink_c(struct nlmsghdr* header, void* nif, void* stack){
   struct ifinfomsg* ifi = (struct ifinfomsg*)(NLMSG_DATA(header));
   struct config* generic_conf;
   struct response* generic_resp;
-  /*
-  1-parsare il payload del pacchetto
-  2-chiamare la gemella del server passando la struttura generica
-  */
   generic_resp = api_table[1].real_fun(generic_conf);
-  /*
-  3-aspettare la risposta con la struttura
-  4-costruire il pacchetto di risposta
-  5-ritornare il puntatore di questo al chiamante.
-  */
 }
 
 struct nlmsghdr* rtm_newaddr_c(struct nlmsghdr* header, void* nif, void* stack){
   struct ifaddrmsg* ifa = (struct ifaddrmsg*)(NLMSG_DATA(header));//(NLMSG_DATA(header));
   struct config generic_conf;
   struct response* generic_resp;
-  char str[INET6_ADDRSTRLEN];
+  char str6[INET6_ADDRSTRLEN];
+  char* str4;
   generic_conf.operation=header->nlmsg_type;
   generic_conf.interface=nif;
   generic_conf.mask=ifa->ifa_prefixlen;
@@ -158,17 +113,17 @@ struct nlmsghdr* rtm_newaddr_c(struct nlmsghdr* header, void* nif, void* stack){
   struct rtattr* attr = (struct rtattr*)((void*)(((char*)ifa)+ sizeof(struct ifaddrmsg)));
   if(ifa->ifa_family == AF_INET6){
     struct in6_addr* ip6_a = (struct in6_addr*)RTA_DATA(attr);
-    inet_ntop(ifa->ifa_family, ip6_a, str, INET6_ADDRSTRLEN);
-    inet_pton(ifa->ifa_family, str, ip6_a);
+    inet_ntop(ifa->ifa_family, ip6_a, str6, INET6_ADDRSTRLEN);
+    inet_pton(ifa->ifa_family, str6, ip6_a);
+    generic_conf.addr=str6;
   }
-  generic_conf.addr=str;
+  else{
+    struct in_addr ip4_a = *((struct in_addr*)RTA_DATA(attr));
+    str4 = inet_ntoa(ip4_a);
+    generic_conf.addr=str4;
+  }
   generic_conf.stack=stack;
   generic_resp = api_table[2].real_fun(&generic_conf);
-  /*
-  3-aspettare la risposta con la struttura
-  4-costruire il pacchetto di risposta
-  5-ritornare il puntatore di questo al chiamante.
-  */
 }
 
 struct nlmsghdr* rtm_deladdr_c(struct nlmsghdr* header, void* nif, void* stack){
@@ -179,16 +134,7 @@ struct nlmsghdr* rtm_getaddr_c(struct nlmsghdr* header, void* nif, void* stack){
   struct ifaddrmsg* ifa = (struct ifaddrmsg*)(NLMSG_DATA(header));
   struct config* generic_conf;
   struct response* generic_resp;
-  /*
-  1-parsare il payload del pacchetto
-  2-chiamare la gemella del server passando la struttura generica
-  */
   generic_resp = api_table[3].real_fun(generic_conf);
-  /*
-  3-aspettare la risposta con la struttura
-  4-costruire il pacchetto di risposta
-  5-ritornare il puntatore di questo al chiamante.
-  */
 }
 
 struct nlmsghdr* rtm_newroute_c(struct nlmsghdr* header, void* nif, void* stack){
@@ -209,11 +155,6 @@ struct nlmsghdr* rtm_newroute_c(struct nlmsghdr* header, void* nif, void* stack)
   }
   generic_conf.addr=str;
   generic_resp = api_table[4].real_fun(&generic_conf);
-  /*
-  3-aspettare la risposta con la struttura
-  4-costruire il pacchetto di risposta
-  5-ritornare il puntatore di questo al chiamante.
-  */
 }
 
 struct nlmsghdr* rtm_delroute_c(struct nlmsghdr* header, void* nif, void* stack){
@@ -224,59 +165,5 @@ struct nlmsghdr* rtm_getroute_c(struct nlmsghdr* header, void* nif, void* stack)
   struct rtmsg* rtm = (struct rtmsg*)(NLMSG_DATA(header));
   struct config* generic_conf;
   struct response* generic_resp;
-  /*
-  1-parsare il payload del pacchetto
-  2-chiamare la gemella del server passando la struttura generica
-  */
   generic_resp = api_table[5].real_fun(generic_conf);
-  /*
-  3-aspettare la risposta con la struttura
-  4-costruire il pacchetto di risposta
-  5-ritornare il puntatore di questo al chiamante.
-  */
-}
-
-
-int print_address(const void *buf){
-
-    struct nlmsghdr* header = (struct nlmsghdr*) buf;
-    //unsigned char* ip_string[sizeof(struct in6_addr)];
-    char str[INET6_ADDRSTRLEN];
-    if(header->nlmsg_type == RTM_NEWROUTE || header->nlmsg_type == RTM_DELROUTE || header->nlmsg_type == RTM_GETROUTE){
-      struct rtmsg* rtm = (struct rtmsg*)(NLMSG_DATA(header));
-      struct rtattr* attr = (struct rtattr*)((void*)(((char*)rtm)+ sizeof(struct rtmsg)));
-
-      if(rtm->rtm_family == AF_INET6){
-        struct in6_addr* ip6_a = (struct in6_addr*)RTA_DATA(attr);
-        inet_ntop(rtm->rtm_family, ip6_a, str, INET6_ADDRSTRLEN);
-        ("IPv6 address route: %s\n",str);
-      }
-      else if(rtm->rtm_family == AF_INET){
-        struct in_addr* ip4_a = (struct in_addr*)RTA_DATA(attr);
-        printf("IPv4 address route: %s\n", inet_ntoa(*ip4_a));
-      }
-
-    }
-    else if(header->nlmsg_type == RTM_NEWADDR || header->nlmsg_type == RTM_DELADDR || header->nlmsg_type == RTM_GETADDR){
-      struct ifaddrmsg* ifa = (struct ifaddrmsg*)(NLMSG_DATA(header));
-      struct rtattr* attr = (struct rtattr*)((void*)(((char*)ifa)+ sizeof(struct ifaddrmsg)));
-      //struct in_addr* ip_a = (struct in_addr*)RTA_DATA(attr);
-      if(ifa->ifa_family == AF_INET6){
-        struct in6_addr* ip6_a = (struct in6_addr*)RTA_DATA(attr);
-        inet_ntop(ifa->ifa_family, ip6_a, str, INET6_ADDRSTRLEN);
-        printf("IPv6 address add: %s\n",str);
-        inet_pton(ifa->ifa_family, str, ip6_a);
-      }
-      else if(ifa->ifa_family == AF_INET){
-        struct in_addr* ip4_a = (struct in_addr*)RTA_DATA(attr);
-        printf("IPv4 address add: %s\n", inet_ntoa(*ip4_a));
-      }
-      //printf("prefix: %d\n", ifa->ifa_prefixlen);
-      //printf("ip_add: %s\n", inet_ntoa(*ip_a));
-    }
-    else if(header->nlmsg_type == RTM_NEWLINK || header->nlmsg_type == RTM_DELLINK || header->nlmsg_type == RTM_GETLINK){
-      //struct ifinfomsg* ifi = (struct ifinfomsg*)(NLMSG_DATA(header));
-      //struct rtattr* attr = (struct rtattr*)((void*)(((char*)ifi)+ sizeof(struct ifinfomsg)));
-    }
-    return 0;
 }

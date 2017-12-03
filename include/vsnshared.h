@@ -12,6 +12,5 @@ struct response{
 
 extern void handle_vsnlib(void* buf, size_t len, void* nif, void* stack);
 extern int init_vsnlib(char* stack);
-extern int print_address(const void *buf);
 
 #endif

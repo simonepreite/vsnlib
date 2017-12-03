@@ -123,7 +123,7 @@ void fill_buf_addr(struct addr_payload* buffer, char* IPv6, int mask, int mode){
 int main(int argc, char** argv){
 
 
-  struct sockaddr_in serv_addr;
+  struct sockaddr_in6 serv_addr;
   int fd;
 
   struct stack *stack;
@@ -132,12 +132,11 @@ int main(int argc, char** argv){
   void* buf_r;
   void* buf_l;
   struct response* ret;
+  struct ip_addr addr_6;
 
   struct addr_payload buf_addr;
   struct route_payload buf_route;
   struct link_payload buf_link;
-
-  //fill_buf(&buffer, "2001:db8:0:f101::1", 64, RTM_NEWADDR);
 
   buf=&buf_addr.header;
   buf_r=&buf_route.header;
@@ -176,12 +175,14 @@ int main(int argc, char** argv){
   handle_vsnlib(buf_r, buf_route.header.nlmsg_len, (void*)nif, (void*)stack);
 
   memset((char *) &serv_addr,0,sizeof(serv_addr));
-    serv_addr.sin_family      = PF_INET;
-    inet_pton(PF_INET, "2001:db8:0:f101::1", &serv_addr.sin_addr);
-    serv_addr.sin_port = htons(atoi("9999"));
+    serv_addr.sin6_family = PF_INET6;
+    IP6_ADDR(&addr_6,0x2001,0xdb8,0x0000,0xf101,0x0000,0x0000,0x0000,0x2);
+    //serv_addr.sin6_addr = (struct in6_addr)addr_6;//
+    inet_pton(PF_INET, "2001:db8:0:f101::1", &serv_addr.sin6_addr.s6_addr);
+    serv_addr.sin6_port = htons(atoi("9999"));
 
     /* create a TCP lwipv6 socket */
-    if((fd=lwip_msocket(stack,PF_INET,SOCK_STREAM,0))<0) {
+    if((fd=lwip_msocket(stack,PF_INET6,SOCK_STREAM,0))<0) {
       perror("Socket opening error");
       exit(-1);
     }
