@@ -1,3 +1,6 @@
 #exclude executable
 
 build*
+*.o
+*.exe
+
