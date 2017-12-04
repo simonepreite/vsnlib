@@ -33,7 +33,7 @@ struct response* adddeladdr(struct config* cfg){
     printf("ipv6 addr:  %04X::%04X::%04X::%04X::%04X::%04X::%04X::%04X\n",htons(*(p)),htons(*(p+1)),htons(*(p+2)),htons(*(p+3)),htons(*(p+4)),htons(*(p+5)),htons(*(p+6)),htons(*(p+7)));
     IP6_ADDR(&addr,htons(*(p)),htons(*(p+1)),htons(*(p+2)),htons(*(p+3)),htons(*(p+4)),htons(*(p+5)),htons(*(p+6)),htons(*(p+7)));
     printf("mask:  %04X::%04X::%04X::%04X::%04X::%04X::%04X::%04X\n",*(p_mask),*(p_mask+1),*(p_mask+2),*(p_mask+3),*(p_mask+4),*(p_mask+5),*(p_mask+6),*(p_mask+7));
-    IP6_ADDR(&mask,*(p_mask),*(p_mask+1),*(p_mask+2),*(p_mask+3),*(p_mask+4),*(p_mask+5),*(p_mask+6),*(p_mask+7)); // da sistemate con cfg
+    IP6_ADDR(&mask,*(p_mask),*(p_mask+1),*(p_mask+2),*(p_mask+3),*(p_mask+4),*(p_mask+5),*(p_mask+6),*(p_mask+7));
   }
   else{
     struct in_addr ip4;
