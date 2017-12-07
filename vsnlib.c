@@ -28,7 +28,7 @@ char* combine_stack_handler(char* fun_name, char* stack){
 }
 
 
-int init_vsnlib(char* stack){ // stack al momento sarà la stringa .so della libreria, in seguito vedremo di far digitare all'utente solo il nome dello stack
+int init_vsnlib(char* stack){
   const char *error;
   char* f;
   void *stack_module;
@@ -99,7 +99,7 @@ struct nlmsghdr* rtm_setlink_c(struct nlmsghdr* header, void* nif, void* stack){
 }
 
 struct nlmsghdr* rtm_newaddr_c(struct nlmsghdr* header, void* nif, void* stack){
-  struct ifaddrmsg* ifa = (struct ifaddrmsg*)(NLMSG_DATA(header));//(NLMSG_DATA(header));
+  struct ifaddrmsg* ifa = (struct ifaddrmsg*)(NLMSG_DATA(header));
   struct config generic_conf;
   struct response* generic_resp;
   char str6[INET6_ADDRSTRLEN];

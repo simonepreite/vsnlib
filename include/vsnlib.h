@@ -43,8 +43,8 @@ struct nlmsghdr* rtm_dellink_c(struct nlmsghdr* header, void* nif, void* stack);
 struct nlmsghdr* rtm_getlink_c(struct nlmsghdr* header, void* nif, void* stack);
 struct nlmsghdr* rtm_setlink_c(struct nlmsghdr* header, void* nif, void* stack);
 
-typedef struct nlmsghdr* vns_cli(struct nlmsghdr* header, void* nif, void* stack);
-static vns_cli *vsncli_fun_table[]={
+typedef struct nlmsghdr* vsn_cli(struct nlmsghdr* header, void* nif, void* stack);
+static vsn_cli *vsncli_fun_table[]={
 	/* NEW/DEL/GET/SET link */
   rtm_newlink_c,
   rtm_dellink_c,
